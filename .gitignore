@@ -1,0 +1,16 @@
+coverage.html
+dump/
+app-cov/
+node_modules/
+*.log
+node_modules/*
+!node_modules/_/
+node_modules/_/**/node_modules/
+*.iml
+config/local.js
+.idea
+.DS_Store
+*.swp
+*.swo
+*.swn
+newrelic_agent.log
