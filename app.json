@@ -1,0 +1,21 @@
+{
+  "name": "onetwotrip-task",
+  "repository": "https://github.com/nooks/OneTwoTrip-task",
+  "scripts": {},
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "addons": ["heroku-redis"],
+  "image": "heroku/nodejs",
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "Free"
+    },
+    "worker": {
+      "quantity": 1,
+      "size": "Free"
+    }
+  }
+}
+

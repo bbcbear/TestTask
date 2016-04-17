@@ -1,0 +1,23 @@
+{
+  "name": "onetwotrip-test-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon ./",
+    "test": "mocha"
+  },
+  "engines": {
+    "node": "^5.10"
+  },
+  "author": "Nook Scheel <nook@live.ru> (http://nook.pw)",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.8.2",
+    "minimist": "^1.2.0",
+    "redis": "^2.6.0-1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.9.1"
+  }
+}
