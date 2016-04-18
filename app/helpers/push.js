@@ -37,7 +37,7 @@ Push.prototype._write = function (data, e, next) {
 };
 
 Push.prototype.end = function () {
-  Writable.prototype.end.call(this);
+  Push.super_.prototype.end.call(this);
   this.redis.end(false);
 };
 
