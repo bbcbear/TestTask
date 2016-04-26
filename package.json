@@ -1,6 +1,6 @@
 {
-  "name": "onetwotrip-test-task",
-  "version": "1.0.1",
+  "name": "test-task",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
