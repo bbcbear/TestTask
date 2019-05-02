@@ -4,7 +4,7 @@
  */
 
 var redis = require('redis');
-var _ = require('lodash');
+//var _ = require('lodash');
 
 /*!
  * Expose create client.
