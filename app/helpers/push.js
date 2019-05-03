@@ -1,31 +1,31 @@
 const { Writable } = require('stream');
 const { inherits } = require('util');
 
-class Push{
 /**
  * Push constructor
  *
- * @param {Object} options
- */
-
+ * @param {Object}
+*/
+class Push{
   constructor(queue, redisClient) {
-  /*!
-  * Inherits from Writable.
-  */
-    inherits(Push, Writable);
-
+    /*
+     * Create  readable stream  outputs { Objects }
+     */
     Writable.call(this, { "objectMode": true });
 
     this.queue = queue;
     this.redis = redisClient;
-
-    this.redis.on("error", (err) => {
-      this.end("error", err)
-     });
 }
+  /**
+   * Subscribe to errors
+   */
+  get(){
+    this.redis.on("error", (error) => {
+      this.end("error", error)
+    });
+  }
 
   _write(data, e, next) {
-
     this.redis.rpush(this.queue, JSON.stringify(data), (err) => {
       if (err) return next(err);
       this.emit('pushed', data);
@@ -38,5 +38,7 @@ class Push{
     this.redis.end(false);
   };
 }
+
+inherits(Push, Writable);
 
 module.exports = Push;
