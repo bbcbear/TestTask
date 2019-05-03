@@ -3,8 +3,8 @@
  * Module dependencies.
  */
 
-var Readable = require('stream').Readable;
-var inherits = require("util").inherits;
+const { Readable } = require('stream');
+const { inherits } = require("util");
 
 /**
  * Pull constructor.
@@ -12,20 +12,23 @@ var inherits = require("util").inherits;
  * @param {Object} options
  */
 
-function Pull(queue, redisClient, onTimeout, timeout) {
-  var self = this;
+class Pull {
+  constructor(queue, redisClient, onTimeout, timeout){
 
-  Readable.call(self, { objectMode: true });
+    Readable.call(this, { objectMode: true });
 
-  self.queue = queue;
-  self.redis = redisClient;
-  self.onTimeout = onTimeout || function () {};
-  self.timeout = timeout || 10;
-  self.idle = (self.timeout + (5 + Math.random() * (25 - 5) | 0)) * 1000;
+    this.queue = queue;
+    this.redis = redisClient;
+    this.onTimeout = onTimeout || function () {};
+    this.timeout = timeout || 10;
+    this.idle = (this.timeout + (5 + Math.random() * (25 - 5) | 0)) * 1000;
+  }
 
-  self.redis.on("error", function (err) {
-    self.emit("error", err)
-  });
+  get(){
+    this.redis.on("error", (err) => {
+      this.emit("error", err)
+    });
+  }
 }
 
 /**
