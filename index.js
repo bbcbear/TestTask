@@ -1,33 +1,24 @@
+const minimist = require('minimist');
 
-/*!
- * Module dependencies.
- */
+const Pull = require('./app/helpers/pull');
+const Push = require('./app/helpers/push');
+const notifier = require('./app/helpers/notifier');
+const redisClient = require('./app/helpers/redis');
+const Message = require('./app/models/Message');
 
-var minimist = require('minimist');
-var Pull = require('./app/helpers/pull');
-var Push = require('./app/helpers/push');
-var notifier = require('./app/helpers/notifier');
-var redisClient = require('./app/helpers/redis');
-
-/*!
- * Models.
- */
-
-var Message = require('./app/models/Message');
-
-/*!
+/*
  * Get errors.
  */
 
-var argv = minimist(process.argv.slice(2));
-if (~argv._.indexOf('getErrors'))
+const argv = minimist(process.argv.slice(2));
+if (argv._.includes('getErrors'))
   return createGetErrors();
 
 /*!
  * Start worker.
  */
 
-var worker = createWorker();
+let worker = createWorker();
 
 /*!
  * Events.
@@ -44,14 +35,17 @@ notifier.subscribe('idleTimeout', function () {
  */
 
 function createWorker() {
-  var errors = new Push('errors', redisClient());
-  var worker = new Pull('messages', redisClient(), function onTimeout() {
+  let errors = new Push('errors', redisClient());
+  let worker = new Pull('messages', redisClient(), function onTimeout() {
     notifier.publish('idleTimeout', true);
   });
 
   worker.on("data", function (data) {
     eventHandler(data, function (err, data) {
-      if (err) return errors.write(data);
+      if (err) {
+        console.log('Error message', data);
+        return errors.write(data);
+      }
       console.log('Read message', data);
     })
   });
@@ -61,32 +55,31 @@ function createWorker() {
 
 function eventHandler(msg, callback) {
   function onComplete() {
-    var error = Math.random() > 0.85;
+    let error = Math.random() > 0.85;
     callback(error, msg);
   }
 
   setTimeout(onComplete, Math.floor(Math.random() * 1000));
 }
-
 /*!
  * Create generator.
  */
 
 function createGenerator() {
-  var client = redisClient();
-  var generator = new Push('messages', redisClient());
+  let client = redisClient();
+  let generator = new Push('messages', redisClient());
 
   (function next() {
-    var message = Message.getMessage();
+    let message = Message.getMessage();
     generator.write(message);
     console.log('Write message', message);
-    client.llen('messages', function (err, length) {
-      if (length > 1000000)
+    client.llen('messages', (err, length) => {
+      if (length > 100000){
         return notifier.publish('idleTimeout', true);
+      }  
       next();
     });
   })();
-
   return generator;
 }
 
@@ -95,14 +88,7 @@ function createGenerator() {
  */
 
 function createGetErrors() {
-  var errors = new Pull('errors', redisClient(), function () {
-    errors.end();
-  }, 0);
-
-  errors.on("data", function (data) {
-    console.log(data);
-  });
-
+  let errors = new Pull('errors', redisClient(), () => errors.end(), 0);
+  errors.on("data", (data) => console.log(data));
   return errors;
 }
-
