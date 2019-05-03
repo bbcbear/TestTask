@@ -1,26 +1,18 @@
+const { EventEmitter } = require('events');
+const { inherits }     = require("util");
 
-/*!
- * Module dependencies.
- */
-
-var EventEmitter = require('events').EventEmitter;
-var inherits = require("util").inherits;
-
-var Notifier = function() { EventEmitter.call(this); };
-
-Notifier.prototype.subscribe = function(topic, cb){
-  this.on(topic, cb);
-};
-
-Notifier.prototype.publish = function() {
-  this.emit.apply(this, arguments);
+class Notifier {
+  constructor(){
+    EventEmitter.call(this);
+  }
+  subscribe (topic, callback) {
+    this.on(topic, callback);
+  }
+  publish() {
+    this.emit.apply(this, arguments);
+  }
 };
 
 inherits(Notifier, EventEmitter);
 
-/*!
- * Expose singleton Notifier.
- */
-
-module.exports = exports = new Notifier();
-
+module.exports = new Notifier();
