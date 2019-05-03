@@ -14,3 +14,5 @@ config/local.js
 *.swo
 *.swn
 newrelic_agent.log
+.eslintrc.yml
+package-lock.json
