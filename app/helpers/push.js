@@ -1,5 +1,7 @@
-module.exports = class Push{
+const { Writable } = require('stream');
+const { inherits } = require('util');
 
+class Push{
 /**
  * Push constructor
  *
@@ -7,12 +9,6 @@ module.exports = class Push{
  */
 
   constructor(queue, redisClient) {
-  /*!
-  * Module dependencies.
-  */
-    const { Writable } = require('stream');
-    const { inherits } = require('util');
-  
   /*!
   * Inherits from Writable.
   */
@@ -42,3 +38,5 @@ module.exports = class Push{
     this.redis.end(false);
   };
 }
+
+module.exports = Push;
