@@ -5,7 +5,7 @@ const redis = require('redis');
  */
 function redisClient (URI) {
   let options = parseRedisURI(URI || process.env.REDIS_URL);
-  let client = redis.createClient(options.port, options.host);;
+  let client = redis.createClient(options.port, options.host);
 
   if (options.pass && options.pass.length) client.auth(options.pass);
 
