@@ -1,7 +1,5 @@
 # TestTask
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
 ## Introduce:
 
 При написании разрешено использовать любые встроенные node.js модули, кроме cluster. Также разрешены модули логгирования - любая библиотека на выбор, если необходимо. Можно использовать underscore, async, step, redis, minimist. Остальные сторонние библиотеки запрещены.
