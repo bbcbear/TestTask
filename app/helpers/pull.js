@@ -29,47 +29,41 @@ class Pull {
       this.emit("error", err)
     });
   }
-}
+  _read(){
+    const self = this;
 
-/**
- * Implementation _read.
- */
+    this.idleTimeout && clearTimeout(self.idleTimeout);
+    this.idleTimeout = setTimeout(self.onTimeout, self.idle);
 
-Pull.prototype._read = function () {
-  var self = this;
+    process.nextTick(function next() {
+      self.redis.blpop(self.queue, self.timeout, function (err, res) {
+        if (err) return self.emit("error", err);
+        if (!res) return setImmediate(next);
 
-  self.idleTimeout && clearTimeout(self.idleTimeout);
-  self.idleTimeout = setTimeout(self.onTimeout, self.idle);
+        let queue = res[0];
+        let data = res[1];
 
-  process.nextTick(function next() {
-    self.redis.blpop(self.queue, self.timeout, function (err, res) {
-      if (err) return self.emit("error", err);
-      if (!res) return setImmediate(next);
+        if (queue !== self.queue)
+          return pull.emit("error", "I haven't subscribed to the " + resQueue);
 
-      var queue = res[0];
-      var data = res[1];
+        if (!data)
+          return setImmediate(next);
 
-      if (queue !== self.queue)
-        return pull.emit("error", "I haven't subscribed to the " + resQueue);
+        try {
+          data = JSON.parse(data)
+        } catch(e) {
+          return self.emit("error", e);
+        }
 
-      if (!data)
-        return setImmediate(next);
-
-      try {
-        data = JSON.parse(data)
-      } catch(e) {
-        return self.emit("error", e);
-      }
-
-      self.push(data);
+        self.push(data);
+      });
     });
-  });
+  }
+  end() {
+    this.redis.end(false);
+    this.push(null);
+  }
 }
-
-Pull.prototype.end = function () {
-  this.redis.end(false);
-  this.push(null);
-};
 
 /*!
  * Inherits from Readable.
