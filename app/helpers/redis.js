@@ -1,5 +1,4 @@
 const redis = require('redis');
-//var _ = require('lodash');
 
 /*!
  * Expose create client.
