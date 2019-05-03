@@ -29,9 +29,9 @@ class Pull {
     this.idleTimeout = setTimeout(this.onTimeout, this.idle);
 
     process.nextTick(function next() {
-      self.redis.blpop(self.queue, self.timeout, (err, res) => {
-        let queue = res[0];
-        let data = res[1];
+      self.redis.blpop(self.queue, self.timeout, (error, response) => {
+        let queue = response[0];
+        let data = response[1];
 
         if (error) return self.emit("error", error);
 
