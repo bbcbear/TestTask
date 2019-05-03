@@ -1,20 +1,16 @@
-
-/*!
- * Module dependencies.
- */
-
-function Message() {
-  this.cnt = 0;
-}
-
 /**
- * Generate message
- *
- * @return Number
+ * Create Messages with Factory method
+ * 
+ * @return { Number }
  */
 
-Message.prototype.getMessage = function () {
-  return this.cnt++;
+class Message {
+  constructor(){
+    this.count = 0;
+  }
+  getMessage () {
+    return this.count++;
+  }
 }
 
 module.exports = new Message();
