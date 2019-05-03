@@ -1,6 +1,6 @@
 const Pull = require('./app/helpers/pull');
 const Push = require('./app/helpers/push');
-const notifier = require('./app/helpers/notifier');
+const Notifier = require('./app/helpers/notifier');
 const redisClient = require('./app/helpers/redis');
 const Message = require('./app/models/Message');
 
