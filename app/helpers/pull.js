@@ -10,7 +10,7 @@ class Pull {
 
     this.queue = queue;
     this.redis = redisClient;
-    this.onTimeout = onTimeout || 500;
+    this.onTimeout = onTimeout || function() { };
     this.timeout = timeout || 500;
     this.idle = this.timeout || 1000;
   }
@@ -23,31 +23,29 @@ class Pull {
     });
   }
   _read(){
-    const self = this;
-
     this.idleTimeout && clearTimeout(this.idleTimeout);
     this.idleTimeout = setTimeout(this.onTimeout, this.idle);
 
-    process.nextTick(function next() {
-      self.redis.blpop(self.queue, self.timeout, (error, response) => {
+    process.nextTick(()=> {
+      this.redis.blpop(this.queue, this.timeout, (error, response) => {
         let queue = response[0];
         let data = response[1];
 
-        if (error) return self.emit("error", error);
+        if (error) return this.emit("error", error);
 
         if (!response) return setImmediate(next);
 
-        if (queue !== self.queue) return pull.emit("error", `Haven't subscribed to ${resQueue}`);
+        if (queue !== this.queue) return pull.emit("error", `Haven't subscribed to ${resQueue}`);
 
         if (!data) return setImmediate(next);
 
         try {
           data = JSON.parse(data)
         } catch(err) {
-          return self.emit("error", err);
+          return this.emit("error", err);
         }
 
-        self.push(data);
+        this.push(data);
       });
     });
   }
@@ -60,4 +58,3 @@ class Pull {
 inherits(Pull, Readable)
 
 module.exports =  Pull;
-
