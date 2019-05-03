@@ -23,17 +23,16 @@ module.exports = class Push{
     this.queue = queue;
     this.redis = redisClient;
 
-    this.redis.on("error", function (err) {
+    this.redis.on("error", (err) => {
       this.end("error", err)
-    });
-  }
+     });
+}
 
   _write(data, e, next) {
-    const self = this;
 
-    self.redis.rpush(this.queue, JSON.stringify(data), function (err) {
+    this.redis.rpush(this.queue, JSON.stringify(data), (err) => {
       if (err) return next(err);
-      self.emit('pushed', data);
+      this.emit('pushed', data);
       next();
     });
   };
