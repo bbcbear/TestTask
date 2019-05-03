@@ -1,58 +1,50 @@
-
-/*!
- * Module dependencies.
- */
-
 const { Readable } = require('stream');
 const { inherits } = require("util");
 
-/**
- * Pull constructor.
- *
- * @param {Object} options
- */
-
 class Pull {
   constructor(queue, redisClient, onTimeout, timeout){
-
-    Readable.call(this, { objectMode: true });
+    /*
+     * Create  readable stream  outputs { Objects }
+     */
+    Readable.call(this, { objectMode: true }); 
 
     this.queue = queue;
     this.redis = redisClient;
-    this.onTimeout = onTimeout || function () {};
-    this.timeout = timeout || 10;
-    this.idle = (this.timeout + (5 + Math.random() * (25 - 5) | 0)) * 1000;
+    this.onTimeout = onTimeout || 500;
+    this.timeout = timeout || 500;
+    this.idle = this.timeout || 1000;
   }
-
+  /**
+   * Subscribe to errors
+   */
   get(){
-    this.redis.on("error", (err) => {
-      this.emit("error", err)
+    this.redis.on("error", (error) => {
+      this.emit("error", error)
     });
   }
   _read(){
     const self = this;
 
-    this.idleTimeout && clearTimeout(self.idleTimeout);
-    this.idleTimeout = setTimeout(self.onTimeout, self.idle);
+    this.idleTimeout && clearTimeout(this.idleTimeout);
+    this.idleTimeout = setTimeout(this.onTimeout, this.idle);
 
     process.nextTick(function next() {
-      self.redis.blpop(self.queue, self.timeout, function (err, res) {
-        if (err) return self.emit("error", err);
-        if (!res) return setImmediate(next);
-
+      self.redis.blpop(self.queue, self.timeout, (err, res) => {
         let queue = res[0];
         let data = res[1];
 
-        if (queue !== self.queue)
-          return pull.emit("error", "I haven't subscribed to the " + resQueue);
+        if (error) return self.emit("error", error);
 
-        if (!data)
-          return setImmediate(next);
+        if (!response) return setImmediate(next);
+
+        if (queue !== self.queue) return pull.emit("error", `Haven't subscribed to ${resQueue}`);
+
+        if (!data) return setImmediate(next);
 
         try {
           data = JSON.parse(data)
-        } catch(e) {
-          return self.emit("error", e);
+        } catch(err) {
+          return self.emit("error", err);
         }
 
         self.push(data);
@@ -65,15 +57,7 @@ class Pull {
   }
 }
 
-/*!
- * Inherits from Readable.
- */
-
 inherits(Pull, Readable)
 
-/*!
- * Expose Pull.
- */
-
-module.exports = exports = Pull;
+module.exports =  Pull;
 
